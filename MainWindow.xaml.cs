@@ -1,5 +1,7 @@
 ﻿using Nll_Unlocker.Classes;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Nll_Unlocker
@@ -9,40 +11,50 @@ namespace Nll_Unlocker
     /// </summary>
     public partial class MainWindow : Window
     {
-        private List<MyProcess> processes = new List<MyProcess>();
+        private ObservableCollection<MyProcess> processes = new ObservableCollection<MyProcess>();
+
 
         public MainWindow()
         {
             InitializeComponent();
-            LoadProcesses();
+            ProcessGrid.ItemsSource = processes;
+
+            Loaded += async (s, e) => await LoadProcesses();
         }
 
-        private void LoadProcesses()
+        private Task LoadProcesses()
         {
             processes.Clear();
             foreach (var p in Process.GetProcesses())
             {
-                processes.Add(new MyProcess
+                var proc = new MyProcess
                 {
-                    Icon = ProcessManager.GetProcessIcon(p),
                     ProcessName = p.ProcessName,
                     Id = p.Id,
-                    CmdLine = ProcessManager.GetCommandLine(p),
+                    Icon = ProcessManager.GetProcessIcon(p),
                     IsCritical = ProcessManager.IsCritical(p),
-                    Risk = ProcessManager.EvaluateRisk(p)
+                    Risk = 0,
+                    CmdLine = "Loading..."
+                };
+
+                processes.Add(proc);
+
+                _ = Task.Run(async () =>
+                {
+                    proc.Risk = await ProcessManager.EvaluateRiskAsync(p);
+                    proc.CmdLine = await ProcessManager.GetCommandLineAsync(p);
                 });
             }
 
-            ProcessGrid.ItemsSource = null;
-            ProcessGrid.ItemsSource = processes;
+            return Task.CompletedTask;
         }
 
-        private void Refresh_Click(object sender, RoutedEventArgs e)
+        private async void Refresh_Click(object sender, RoutedEventArgs e)
         {
-            LoadProcesses();
+            await LoadProcesses();
         }
 
-        private void EndProcess_Click(object sender, RoutedEventArgs e)
+        private async void EndProcess_Click(object sender, RoutedEventArgs e)
         {
             if (ProcessGrid.SelectedItem is MyProcess selected)
             {
@@ -57,7 +69,7 @@ namespace Nll_Unlocker
                     var proc = Process.GetProcessById(selected.Id);
                     proc.Kill();
                     MessageBox.Show($"Process {selected.ProcessName} ended.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-                    LoadProcesses();
+                    await LoadProcesses();
                 }
                 catch (Exception ex)
                 {

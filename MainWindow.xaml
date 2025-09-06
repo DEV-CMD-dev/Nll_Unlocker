@@ -19,13 +19,6 @@
 
         <DataGrid x:Name="ProcessGrid" AutoGenerateColumns="False" IsReadOnly="False" SelectionMode="Single">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Risk" Binding="{Binding Risk}" Width="80">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Background" Value="{Binding Risk, Converter={StaticResource RiskToBrushConverter}}"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
 
                 <DataGridTemplateColumn Header="Icon" Width="40">
                     <DataGridTemplateColumn.CellTemplate>
@@ -34,9 +27,16 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
-                <DataGridTextColumn Header="Process Name" Binding="{Binding ProcessName}" Width="*"/>
+                <DataGridTextColumn Header="Process Name" Binding="{Binding ProcessName}" Width="150"/>
                 <DataGridTextColumn Header="CmdLine" Binding="{Binding CmdLine}" Width="*" />
                 <DataGridTextColumn Header="PID" Binding="{Binding Id}" Width="100"/>
+                <DataGridTextColumn Header="Risk" Binding="{Binding Risk}" Width="80">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Background" Value="{Binding Risk, Converter={StaticResource RiskToBrushConverter}}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
                 <DataGridCheckBoxColumn Header="Critical" Binding="{Binding IsCritical, Mode=TwoWay}" Width="100"/>
             </DataGrid.Columns>
         </DataGrid>

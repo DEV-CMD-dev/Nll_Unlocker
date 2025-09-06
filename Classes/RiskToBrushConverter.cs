@@ -14,6 +14,6 @@ namespace Nll_Unlocker.Classes
             return Brushes.Red;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => null;
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
     }
 }

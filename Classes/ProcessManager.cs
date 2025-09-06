@@ -1,7 +1,11 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Management;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Nll_Unlocker.Classes
 {
@@ -71,6 +75,61 @@ namespace Nll_Unlocker.Classes
                 }
             }
             catch { }
+            return null;
+        }
+
+        public static int EvaluateRisk(Process process)
+        {
+            int risk = 0;
+
+            try
+            {
+                string cmd = ProcessManager.GetCommandLine(process) ?? "";
+                string path = process.MainModule.FileName.ToLower();
+
+                //Sign
+                //string publisher = ProcessManager.GetPublisher(process) ?? "";
+                //if (publisher == "Unknown") risk += 40;
+
+                // Check path
+                if (!path.Contains(@"\windows\") && !path.Contains(@"\program files\")) risk += 20;
+
+                // CmLine check
+                if (cmd.Length > 100 || cmd.Contains("/runhidden") || cmd.Contains("/stealth"))
+                    risk += 20;
+
+            }
+            catch { risk += 10; }
+
+            return risk;
+        }
+
+
+        public static ImageSource GetProcessIcon(Process process)
+        {
+            try
+            {
+                string path = process.MainModule.FileName;
+                Icon ico = Icon.ExtractAssociatedIcon(path);
+                if (ico != null)
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        ico.ToBitmap().Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+                        ms.Seek(0, SeekOrigin.Begin);
+
+                        BitmapImage bmp = new BitmapImage();
+                        bmp.BeginInit();
+                        bmp.StreamSource = ms;
+                        bmp.CacheOption = BitmapCacheOption.OnLoad;
+                        bmp.EndInit();
+                        return bmp;
+                    }
+                }
+            }
+            catch
+            {
+            }
             return null;
         }
     }

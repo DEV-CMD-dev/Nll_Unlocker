@@ -3,9 +3,14 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Nll_Unlocker"
+        xmlns:local="clr-namespace:Nll_Unlocker.Classes"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+
+    <Window.Resources>
+        <local:RiskToBrushConverter x:Key="RiskToBrushConverter"/>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
@@ -14,6 +19,21 @@
 
         <DataGrid x:Name="ProcessGrid" AutoGenerateColumns="False" IsReadOnly="False" SelectionMode="Single">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Risk" Binding="{Binding Risk}" Width="80">
+                    <DataGridTextColumn.ElementStyle>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Background" Value="{Binding Risk, Converter={StaticResource RiskToBrushConverter}}"/>
+                        </Style>
+                    </DataGridTextColumn.ElementStyle>
+                </DataGridTextColumn>
+
+                <DataGridTemplateColumn Header="Icon" Width="40">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Image Source="{Binding Icon}" Width="18" Height="18"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
                 <DataGridTextColumn Header="Process Name" Binding="{Binding ProcessName}" Width="*"/>
                 <DataGridTextColumn Header="CmdLine" Binding="{Binding CmdLine}" Width="*" />
                 <DataGridTextColumn Header="PID" Binding="{Binding Id}" Width="100"/>

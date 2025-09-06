@@ -1,15 +1,6 @@
 ﻿using Nll_Unlocker.Classes;
 using System.Diagnostics;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Nll_Unlocker
 {
@@ -33,10 +24,12 @@ namespace Nll_Unlocker
             {
                 processes.Add(new MyProcess
                 {
+                    Icon = ProcessManager.GetProcessIcon(p),
                     ProcessName = p.ProcessName,
                     Id = p.Id,
                     CmdLine = ProcessManager.GetCommandLine(p),
-                    IsCritical = ProcessManager.IsCritical(p)
+                    IsCritical = ProcessManager.IsCritical(p),
+                    Risk = ProcessManager.EvaluateRisk(p)
                 });
             }
 

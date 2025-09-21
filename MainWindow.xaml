@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Nll_Unlocker.Classes"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="NLL_Unlocker" Height="450" Width="800" Icon="/iconSmall.png">
 
     <Window.Resources>
         <local:RiskToBrushConverter x:Key="RiskToBrushConverter"/>

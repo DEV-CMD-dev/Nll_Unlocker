@@ -88,12 +88,12 @@ namespace Nll_Unlocker.Classes
 
             try
             {
-                string cmd = await ProcessManager.GetCommandLineAsync(process) ?? "";
+                string cmd = await GetCommandLineAsync(process) ?? "";
                 string? path = process.MainModule?.FileName?.ToLower();
 
                 //Sign
-                //string publisher = ProcessManager.GetPublisher(process) ?? "";
-                //if (publisher == "Unknown") risk += 40;
+                string publisher = GetPublisher(process) ?? "";
+                if (publisher == "Unknown") risk += 40;
 
                 // Check path
                 if (!string.IsNullOrEmpty(path) && !path.Contains(@"\windows\") && !path.Contains(@"\program files\")) risk += 20;
@@ -138,6 +138,24 @@ namespace Nll_Unlocker.Classes
             {
             }
             return null;
+        }
+
+        public static string GetPublisher(Process process)
+        {
+            try
+            {
+                string? path = process.MainModule?.FileName;
+                if (!string.IsNullOrEmpty(path) && File.Exists(path))
+                {
+                    FileVersionInfo info = FileVersionInfo.GetVersionInfo(path);
+                    if (!string.IsNullOrEmpty(info.CompanyName))
+                        return info.CompanyName;
+                }
+            }
+            catch
+            {
+            }
+            return "Unknown";
         }
     }
 }

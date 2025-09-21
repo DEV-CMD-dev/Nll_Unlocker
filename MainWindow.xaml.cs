@@ -17,6 +17,8 @@ namespace Nll_Unlocker
         public MainWindow()
         {
             InitializeComponent();
+
+
             ProcessGrid.ItemsSource = processes;
 
             Loaded += async (s, e) => await LoadProcesses();
